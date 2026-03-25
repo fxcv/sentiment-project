@@ -261,14 +261,37 @@ def load_youtube_api_key():
 def extract_video_id(url: str) -> str:
     url = url.strip()
 
+    # 1) 短链接
     if "youtu.be/" in url:
-        return url.split("youtu.be/")[-1].split("?")[0]
+        return url.split("youtu.be/")[-1].split("?")[0].split("/")[0]
 
     parsed = urlparse(url)
-    if "youtube.com" in parsed.netloc:
+    netloc = parsed.netloc.lower()
+    path = parsed.path.strip("/")
+
+    # 2) 标准 watch 链接
+    if "youtube.com" in netloc:
         qs = parse_qs(parsed.query)
-        if "v" in qs:
+        if "v" in qs and qs["v"]:
             return qs["v"][0]
+
+        # 3) shorts 链接
+        if path.startswith("shorts/"):
+            parts = path.split("/")
+            if len(parts) >= 2 and parts[1]:
+                return parts[1]
+
+        # 4) embed 链接
+        if path.startswith("embed/"):
+            parts = path.split("/")
+            if len(parts) >= 2 and parts[1]:
+                return parts[1]
+
+        # 5) live 链接（顺手兼容）
+        if path.startswith("live/"):
+            parts = path.split("/")
+            if len(parts) >= 2 and parts[1]:
+                return parts[1]
 
     raise ValueError("无法识别视频链接，请输入标准 YouTube 视频链接。")
 
