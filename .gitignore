@@ -1,0 +1,19 @@
+__pycache__/
+archive_old/
+youtube_api_key.txt
+
+# 训练数据和中间结果不上传
+data/
+runs_3class_v2/
+runs_7class_final_single/
+
+# 不上传这些脚本（部署不需要）
+analyze_youtube_comments.py
+test_youtube_comments.py
+train_*.py
+merge_*.py
+run_test_cases.py
+start_app.bat
+
+# 不上传这个公开模型目录（当前网页不用）
+models/public_sentiment_3class_model/
